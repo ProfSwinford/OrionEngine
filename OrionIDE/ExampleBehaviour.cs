@@ -13,5 +13,10 @@ namespace OrionIDE
         {
             Print("This is a print statement from OrionBehaviour!");
         }
+
+        public void Update() 
+        {
+            
+        }
     }
 }

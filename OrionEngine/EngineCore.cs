@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using System.Threading;
 using static OrionEngine.EngineUtils;
 using static OrionEngine.EngineStatistics;
 
@@ -53,10 +54,17 @@ namespace OrionEngine
     /// </summary>
     public static class EngineUtils
     {
-        public static void Print(Object? message = null, char end = char.MinValue)
+#nullable enable
+        public static void Print(object? message = null, char end = char.MinValue)
         {
+            if (message == null)
+            {
+                message = "\n";
+            }
+
             Console.Write((message??"").ToString()+end);
         }
+#nullable disable
 
         public static void ConsoleCurrentLineClear()
         {
@@ -131,7 +139,6 @@ namespace OrionEngine
             switch (type) 
             {
                 case LogType.LOG:
-
                     new ColoredText("LOG", ConsoleColor.Green).Write();
                     break;
                 case LogType.WARNING:
@@ -156,21 +163,21 @@ namespace OrionEngine
         }
         public static void LogWarning(Object message)
         {
-                DebugOut(LogType.WARNING, message.ToString());
+            DebugOut(LogType.WARNING, message.ToString());
         }
         public static void LogError(Object message)
         {
-                DebugOut(LogType.ERROR, message.ToString());
+            DebugOut(LogType.ERROR, message.ToString());
         }
         public static void LogMessage(Object message)
         {
-                DebugOut(LogType.MESSAGE, message.ToString());
+            DebugOut(LogType.MESSAGE, message.ToString());
         }
         public static void LogMessage(ColoredText message)
         {
             DebugOut(LogType.MESSAGE, "", end:char.MinValue);
             message.Write();
-            Print(end:'\n');
+            Print();
         }
     }
     
@@ -182,15 +189,17 @@ namespace OrionEngine
     /// </summary>
     public class BehaviourControlModule
     {
+        #region BCM Singleton
         private static BehaviourControlModule controlModule = new BehaviourControlModule();
         public static BehaviourControlModule BCM => controlModule;
         static BehaviourControlModule() { }
         private BehaviourControlModule() { }
+        #endregion
         public static bool InitializeBehaviourControlModule()
         {
-        BCMINIT:
             int attempts = 0;
             Debug.Log("Initializing Behaviour Control Module...");
+        BCMINIT:
             if (BCM != null)
             {
                 Debug.Log("Behaviour Control Module Initialized Successfully.");
@@ -237,7 +246,7 @@ namespace OrionEngine
             Debug.Log("Initializing EFC...");
             if (FrameCycle != null)
             {
-                Debug.Log("Behaviour Control Module Initialized Successfully.");
+                Debug.Log("Engine Frame Cycle Initialized Successfully.");
                 return true;
             }
             else if (attempts < 3)
@@ -252,15 +261,15 @@ namespace OrionEngine
                 return false;
             }
         }
-        static EngineFrameCycle(){}
+        static EngineFrameCycle() { }
         private EngineFrameCycle()
         {
             StartEngine();
-            EngineLoop();
         }
-
+        
         public static void EngineLoop()
         {
+            engineStarted = true;
             while (engineStarted)
             {
                 switch (currentCycle)
@@ -287,6 +296,7 @@ namespace OrionEngine
                     case EngineCycle.OnDisable:
                         break;
                     case EngineCycle.OnDestroy:
+                        IncrementFrameCount();
                         break;
                 }
                 //Debug.Log($"Current Engine Cycle: {currentCycle}");
