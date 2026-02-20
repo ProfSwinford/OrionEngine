@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OrionIDE;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -12,6 +13,10 @@ namespace OrionEngine
         static void Main(string[] args)
         {
             EngineCore.EngineCoreInit();
+
+            ExampleBehaviour example = new ExampleBehaviour();
+            //DX11QuadExample quadExample = new DX11QuadExample();
         }
     }
+
 }

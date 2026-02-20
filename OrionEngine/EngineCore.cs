@@ -18,7 +18,7 @@ namespace OrionEngine
         
         int loadingDotCount = 5;
 
-        #region Singleton
+        #region Core Singleton
         private static readonly EngineCore instance = new EngineCore();
         public static EngineCore OrionEngine => instance;
         static EngineCore() { }
@@ -32,12 +32,33 @@ namespace OrionEngine
             
             Console.CursorVisible = false;
 
-            BehaviourControlModule.InitializeBehaviourControlModule();
-            EngineFrameCycle.InitializeEngineFrameCycle();
+            Debug.Log("Initializing Core Engine Modules...");
+            if (!InitializeEngine()) 
+            {
+                throw new Exception("Failed to initialize Engine Core, check log output for details.");
+            }
+            Debug.Log("Engine Initialized Successfully, press any key to contine...");
+            WaitForInput();
+
+            FrameStateController.RunEngineCycle();
         }
         #endregion
 
         public static bool EngineCoreInit() => OrionEngine != null;
+
+        private static bool InitializeEngine() 
+        {
+            if (!BehaviourControlModule.InitializeBehaviourControlModule())
+            {
+                throw new Exception("Failed to initialize Behaviour Control Module.");
+            }
+            Debug.Log("Initializing Engine Frame Cycle...");
+            if (!FrameStateController.InitializeEngineFrameCycle())
+            {
+                throw new Exception("Failed to initialize Engine Frame Cycle.");
+            }
+            return true;
+        }
     }
     public static class EngineStatistics
     {
@@ -63,6 +84,11 @@ namespace OrionEngine
             }
 
             Console.Write((message??"").ToString()+end);
+        }
+
+        public static void WaitForInput()
+        {
+            Console.ReadKey();
         }
 #nullable disable
 
@@ -180,202 +206,6 @@ namespace OrionEngine
             Print();
         }
     }
-    
+
 #endif
-    /// <summary> Engine Control Module
-    /// This class will be responsible for managing the execution of the engine cycle, as well as any other necessary
-    /// tasks related to the engine's operation. It will also be responsible for managing the various modules that make
-    /// up the engine, such as the rendering module, physics module, etc.
-    /// </summary>
-    public class BehaviourControlModule
-    {
-        #region BCM Singleton
-        private static BehaviourControlModule controlModule = new BehaviourControlModule();
-        public static BehaviourControlModule BCM => controlModule;
-        static BehaviourControlModule() { }
-        private BehaviourControlModule() { }
-        #endregion
-        public static bool InitializeBehaviourControlModule()
-        {
-            int attempts = 0;
-            Debug.Log("Initializing Behaviour Control Module...");
-        BCMINIT:
-            if (BCM != null)
-            {
-                Debug.Log("Behaviour Control Module Initialized Successfully.");
-                return true;
-            }
-            else if(attempts < 3)
-            {
-                Debug.LogError("Failed to Initialize Behaviour Control Module. Retrying");
-                attempts++;
-                goto BCMINIT;
-            }
-            else
-            {
-                Debug.LogError("Failed to Initialize Behaviour Control Module after 3 attempts. Aborting.");
-                return false;
-            }
-        }
-
-        #region Internal Update Functions
-        internal static event Action UpdateEvent;
-        internal static void SubscribeUpdate(Action action) => UpdateEvent += action;
-        internal static void UnsubscribeUpdate(Action action) => UpdateEvent -= action;
-        internal static void InvokeUpdate() => UpdateEvent?.Invoke();
-        #endregion
-        #region Internal LateUpdate Functions
-        internal static event Action LateUpdateEvent;
-        internal static void SubscribeLateUpdate(Action action) => LateUpdateEvent += action;
-        internal static void UnsubscribeLateUpdate(Action action) => LateUpdateEvent -= action;
-        internal static void InvokeLateUpdate() => LateUpdateEvent?.Invoke();
-        #endregion
-
-    }
-    public class EngineFrameCycle
-    {
-        // This class will be responsible for managing the execution of the engine cycle.
-        private static EngineFrameCycle frameCycle = new EngineFrameCycle();
-        public static EngineFrameCycle FrameCycle => frameCycle;
-        internal static bool engineStarted = false;
-        static EngineCycle currentCycle = 0;
-        public static bool InitializeEngineFrameCycle()
-        {
-        EFCINIT:
-            int attempts = 0;
-            Debug.Log("Initializing EFC...");
-            if (FrameCycle != null)
-            {
-                Debug.Log("Engine Frame Cycle Initialized Successfully.");
-                return true;
-            }
-            else if (attempts < 3)
-            {
-                Debug.LogError("Failed to EFC Module. Retrying");
-                attempts++;
-                goto EFCINIT;
-            }
-            else
-            {
-                Debug.LogError("Failed to Initialize EFC after 3 attempts. Aborting.");
-                return false;
-            }
-        }
-        static EngineFrameCycle() { }
-        private EngineFrameCycle()
-        {
-            StartEngine();
-        }
-        
-        public static void EngineLoop()
-        {
-            engineStarted = true;
-            while (engineStarted)
-            {
-                switch (currentCycle)
-                {
-                    case EngineCycle.Awake:
-                        break;
-                    case EngineCycle.OnEnable:
-                        break;
-                    case EngineCycle.Start:
-                        break;
-                    case EngineCycle.FixedUpdate:
-                        break;
-                    case EngineCycle.OnInputEvents:
-                        break;
-                    case EngineCycle.Update:
-                        BehaviourControlModule.InvokeUpdate();
-                        break;
-                    case EngineCycle.LateUpdate:
-                        break;
-                    case EngineCycle.OnRenderImage:
-                        break;
-                    case EngineCycle.OnApplicationQuit:
-                        break;
-                    case EngineCycle.OnDisable:
-                        break;
-                    case EngineCycle.OnDestroy:
-                        IncrementFrameCount();
-                        break;
-                }
-                //Debug.Log($"Current Engine Cycle: {currentCycle}");
-                System.Threading.Thread.Sleep(1000 / (lockFrameRate ? (int)targetFrameRate : 1000)); //Sleep to maintain target frame rate 
-                IncrementCycle();
-            }
-        }
-        public static void ChangeCycle(EngineCycle newCycle) => currentCycle = newCycle;
-        public static void IncrementCycle() { IncrementFrameCount(); currentCycle++; }
-        public static void StartEngine() => engineStarted = true;
-        public static void StopEngine() => engineStarted = false;
-    }
-
-    /// <summary>
-    /// Behavious class that other scrips will inherit from, allowing them to be attached to game objects and have their own update loops, etc.
-    /// From this class, we will subscribe to the engine's update loop allowing us to have a more flexible and modular approach to game development,
-    /// as well as allowing us to easily create and manage game objects and their behaviors.
-    /// </summary>
-    public abstract class OrionBehaviour
-    {
-        #region OrionBehaviour Utils
-        public void Print(Object message) 
-        {
-            EngineUtils.Print(message.ToString());
-        }
-        #endregion
-
-        private Action cachedAwake;
-        private Action cachedOnEnable;
-        private Action cachedStart;
-        private Action cachedFixedUpdate;
-        private Action cachedUpdate;
-        private Action cachedLateUpdate;
-        private Action OnDisable;
-        private Action OnDestroy;
-
-        internal void InternalOnEnable()
-        {
-            RegisterLifecycleMethods();
-        }
-        internal void InternalOnDisable()
-        {
-            UnregisterLifecycleMethods();
-        }
-        internal void InternalOnDestroy()
-        {
-            InternalOnDestroy();
-        }
-
-        private void RegisterLifecycleMethods()
-        {
-            var type = GetType();
-
-            // We will use reflection to check if the derived class has implemented any of the lifecycle methods.
-            // If so, we will subscribe them to the appropriate events in the EngineControlModule.
-            var updateMethod = type.GetMethod("Update");
-            if (updateMethod != null)
-            {
-                cachedUpdate = (Action)Delegate.CreateDelegate(
-                    typeof(Action), this, updateMethod);
-                BehaviourControlModule.SubscribeUpdate(cachedUpdate);
-            }
-
-            var lateUpdateMethod = type.GetMethod("LateUpdate");
-            if (lateUpdateMethod != null)
-            {
-                cachedLateUpdate = (Action)Delegate.CreateDelegate(
-                    typeof(Action), this, lateUpdateMethod);
-                BehaviourControlModule.SubscribeLateUpdate(cachedLateUpdate);
-            }
-        }
-
-        private void UnregisterLifecycleMethods()
-        {
-            if (cachedUpdate != null)
-                BehaviourControlModule.UnsubscribeUpdate(cachedUpdate);
-
-            if (cachedLateUpdate != null)
-                BehaviourControlModule.UnsubscribeLateUpdate(cachedLateUpdate);
-        }
-    }
 }

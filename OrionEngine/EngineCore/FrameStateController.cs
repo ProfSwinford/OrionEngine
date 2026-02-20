@@ -3,10 +3,87 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static OrionEngine.EngineStatistics;
 
 namespace OrionEngine
 {
-    public enum EngineCycle
+    public class FrameStateController
+    {
+        // This class will be responsible for managing the execution of the engine cycle.
+        private static FrameStateController frameCycle = new FrameStateController();
+        public static FrameStateController FrameCycle => frameCycle;
+        public static bool InitializeEngineFrameCycle()
+        {
+            int attempts = 0;
+
+        EFCINIT:
+            if (FrameCycle != null)
+            {
+                Debug.Log("Engine Frame Cycle Initialized Successfully.");
+                return true;
+            }
+            else if (attempts < 3)
+            {
+                Debug.LogError("Failed to EFC Module. Retrying");
+                attempts++;
+                goto EFCINIT;
+            }
+            else
+            {
+                Debug.LogError("Failed to Initialize EFC after 3 attempts. Aborting.");
+                return false;
+            }
+        }
+        static FrameStateController() { }
+        private FrameStateController() { }
+
+        internal static bool engineStarted = false;
+        static FrameState currentCycle = 0;
+
+        public static void RunEngineCycle()
+        {
+            engineStarted = true;
+            while (engineStarted)
+            {
+                switch (currentCycle)
+                {
+                    case FrameState.Awake:
+                        break;
+                    case FrameState.OnEnable:
+                        break;
+                    case FrameState.Start:
+                        break;
+                    case FrameState.FixedUpdate:
+                        break;
+                    case FrameState.OnInputEvents:
+                        break;
+                    case FrameState.Update:
+                        BehaviourControlModule.InvokeUpdate();
+                        break;
+                    case FrameState.LateUpdate:
+                        break;
+                    case FrameState.OnRenderImage:
+                        break;
+                    case FrameState.OnApplicationQuit:
+                        break;
+                    case FrameState.OnDisable:
+                        break;
+                    case FrameState.OnDestroy:
+                        IncrementFrameCount();
+                        ResetCycle();
+                        break;
+                }
+                //Debug.Log($"Current Engine Cycle: {currentCycle}");
+                System.Threading.Thread.Sleep(1000 / (lockFrameRate ? (int)targetFrameRate : 1000)); //Sleep to maintain target frame rate 
+                IncrementCycle();
+            }
+        }
+        public static void ChangeCycle(FrameState newCycle) => currentCycle = newCycle;
+        public static void IncrementCycle() => currentCycle++;
+        public static void ResetCycle() => currentCycle = 0;
+        public static void StopEngine() => engineStarted = false;
+    }
+    public enum FrameState
     {
         // Comment out unnecessary options to limit our options for the time being. We'll add more as we need them.
 

@@ -9,14 +9,11 @@ namespace OrionIDE
 {
     internal class ExampleBehaviour : OrionBehaviour
     {
-        public void example() 
-        {
-            Print("This is a print statement from OrionBehaviour!");
-        }
-
+        int count = 0;
         public void Update() 
         {
-            
+            count++;
+            EngineUtils.ConsoleWriteLoadingDots(count, 5);
         }
     }
 }
