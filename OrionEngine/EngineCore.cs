@@ -27,8 +27,6 @@ namespace OrionEngine
         public static bool EngineCoreInit() => OrionEngine != null;
         #endregion
 
-
-        IWindow canvas;
         private static void InitializeEngine()
         {
             //Debug logs for testing the Debug class and ColoredText struct
@@ -38,7 +36,7 @@ namespace OrionEngine
             //Debug.LogWarning("Engine Initializing Warnings");
             //Debug.LogError("Engine Initializing Errors");
 
-            ConsoleRendererModule renderModule = new ConsoleRendererModule();
+            //ConsoleRendererModule renderModule = new ConsoleRendererModule();
 
             Console.CursorVisible = false;
             Debug.Log("Initializing Core Engine Modules...");

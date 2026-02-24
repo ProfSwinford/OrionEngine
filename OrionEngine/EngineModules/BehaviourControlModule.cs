@@ -39,13 +39,12 @@ namespace OrionEngine
             }
         }
 
-        #region Internal Start Functions
+        #region Internal OnEnable Functions
         internal static event Action OnEnableEvent;
         internal static void SubscribeOnEnable(Action action) => OnEnableEvent += action;
         internal static void UnsubscribeOnEnable(Action action) => OnEnableEvent -= action;
         internal static void InvokeOnEnable() => OnEnableEvent?.Invoke();
         #endregion
-
         #region Internal Start Functions
         internal static event Action StartEvent;
         internal static void SubscribeStart(Action action) => StartEvent += action;
