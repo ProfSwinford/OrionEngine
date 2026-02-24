@@ -7,11 +7,12 @@ using static OrionEngine.EngineStatistics;
 
 namespace OrionEngine
 {
-    public class FrameStateController
+    public class FrameStateModule
     {
+        #region Singleton
         // This class will be responsible for managing the execution of the engine cycle.
-        private static FrameStateController frameCycle = new FrameStateController();
-        public static FrameStateController FrameCycle => frameCycle;
+        private static FrameStateModule frameCycle = new FrameStateModule();
+        public static FrameStateModule FrameCycle => frameCycle;
         public static bool InitializeEngineFrameCycle()
         {
             int attempts = 0;
@@ -34,8 +35,9 @@ namespace OrionEngine
                 return false;
             }
         }
-        static FrameStateController() { }
-        private FrameStateController() { }
+        static FrameStateModule() { }
+        private FrameStateModule() { }
+        #endregion
 
         internal static bool engineStarted = false;
         static FrameState currentCycle = 0;

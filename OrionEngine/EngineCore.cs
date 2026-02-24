@@ -9,51 +9,58 @@ using System.IO;
 using System.Threading;
 using static OrionEngine.EngineUtils;
 using static OrionEngine.EngineStatistics;
+using OrionEngine.EngineModules.Rendering;
 
 namespace OrionEngine
 {
     //This class will be responsible for managing the overall state of the engine, as well as any necessary initialization and cleanup tasks.
     public class EngineCore
     {
-        
-        int loadingDotCount = 5;
-
         #region Core Singleton
         private static readonly EngineCore instance = new EngineCore();
         public static EngineCore OrionEngine => instance;
         static EngineCore() { }
         private EngineCore()
         {
-            new ColoredText("Welcome to Orion Engine!", ConsoleColor.Cyan).Write('\n');
-            Debug.LogMessage(new ColoredText("Starting Engine Systems:", ConsoleColor.Cyan));
-            Debug.Log("Engine Initializing Logs");
-            Debug.LogWarning("Engine Initializing Warnings");
-            Debug.LogError("Engine Initializing Errors");
-            
-            Console.CursorVisible = false;
+            InitializeEngine();
+        }
+        public static bool EngineCoreInit() => OrionEngine != null;
+        #endregion
 
+
+        IWindow canvas;
+        private static void InitializeEngine()
+        {
+            //Debug logs for testing the Debug class and ColoredText struct
+            //new ColoredText("Welcome to Orion Engine!", ConsoleColor.Cyan).Write('\n');
+            //Debug.LogMessage(new ColoredText("Starting Engine Systems:", ConsoleColor.Cyan));
+            //Debug.Log("Engine Initializing Logs");
+            //Debug.LogWarning("Engine Initializing Warnings");
+            //Debug.LogError("Engine Initializing Errors");
+
+            ConsoleRendererModule renderModule = new ConsoleRendererModule();
+
+            Console.CursorVisible = false;
             Debug.Log("Initializing Core Engine Modules...");
-            if (!InitializeEngine()) 
+            if (!InitEngineModules())
             {
                 throw new Exception("Failed to initialize Engine Core, check log output for details.");
             }
             Debug.Log("Engine Initialized Successfully, press any key to contine...");
             WaitForInput();
 
-            FrameStateController.RunEngineCycle();
+            FrameStateModule.RunEngineCycle();
+
         }
-        #endregion
 
-        public static bool EngineCoreInit() => OrionEngine != null;
-
-        private static bool InitializeEngine() 
+        private static bool InitEngineModules()
         {
             if (!BehaviourControlModule.InitializeBehaviourControlModule())
             {
                 throw new Exception("Failed to initialize Behaviour Control Module.");
             }
             Debug.Log("Initializing Engine Frame Cycle...");
-            if (!FrameStateController.InitializeEngineFrameCycle())
+            if (!FrameStateModule.InitializeEngineFrameCycle())
             {
                 throw new Exception("Failed to initialize Engine Frame Cycle.");
             }
@@ -68,6 +75,7 @@ namespace OrionEngine
         public static int currentFrame => totalFrames + 1;
         public static bool lockFrameRate = true;
         public static float targetFrameRate = 60;
+        public static bool disableConsoleOutput = false;
     }
 
     /// <summary>
@@ -78,6 +86,9 @@ namespace OrionEngine
 #nullable enable
         public static void Print(object? message = null, char end = char.MinValue)
         {
+            if (disableConsoleOutput)
+                return;
+
             if (message == null)
             {
                 message = "\n";
@@ -148,6 +159,8 @@ namespace OrionEngine
 #if DEBUG
     public static class Debug 
     {
+        public static bool ENABLE_DEBUG_LOGS = true;
+
         public enum LogType
         {
             LOG,
@@ -157,8 +170,11 @@ namespace OrionEngine
             NONE
         }
 
-        internal static void DebugOut(LogType type, string message, bool TimeStamp = true, char end = '\n') 
+        internal static void DebugOut(LogType type, string message, bool TimeStamp = true, char end = '\n')
         {
+            if (!ENABLE_DEBUG_LOGS || disableConsoleOutput)
+                return;
+
             var prev = Console.ForegroundColor; //Store current console text color
 
             Print($"{(TimeStamp ? DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss ") : "")}[");

@@ -12,9 +12,10 @@ namespace OrionEngine
     {
         static void Main(string[] args)
         {
+            ExampleBehaviour example = new ExampleBehaviour();
             EngineCore.EngineCoreInit();
 
-            ExampleBehaviour example = new ExampleBehaviour();
+            
             //DX11QuadExample quadExample = new DX11QuadExample();
         }
     }

@@ -39,6 +39,26 @@ namespace OrionEngine
             }
         }
 
+        #region Internal Start Functions
+        internal static event Action OnEnableEvent;
+        internal static void SubscribeOnEnable(Action action) => OnEnableEvent += action;
+        internal static void UnsubscribeOnEnable(Action action) => OnEnableEvent -= action;
+        internal static void InvokeOnEnable() => OnEnableEvent?.Invoke();
+        #endregion
+
+        #region Internal Start Functions
+        internal static event Action StartEvent;
+        internal static void SubscribeStart(Action action) => StartEvent += action;
+        internal static void UnsubscribeStart(Action action) => StartEvent -= action;
+        internal static void InvokeStartUpdate() => StartEvent?.Invoke();
+
+        #endregion
+        #region Internal Fixed Update Functions
+        internal static event Action FixedUpdateEvent;
+        internal static void SubscribeFixedUpdate(Action action) => FixedUpdateEvent += action;
+        internal static void UnsubscribeFixedUpdate(Action action) => FixedUpdateEvent -= action;
+        internal static void InvokeFixedUpdate() => FixedUpdateEvent?.Invoke();
+        #endregion
         #region Internal Update Functions
         internal static event Action UpdateEvent;
         internal static void SubscribeUpdate(Action action) => UpdateEvent += action;
