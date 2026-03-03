@@ -38,7 +38,13 @@ namespace OrionEngine
                 return false;
             }
         }
-
+       
+        #region Internal Awake Functions
+        internal static event Action AwakeEvent;
+        internal static void SubscribeAwake(Action action) => AwakeEvent += action;
+        internal static void UnsubscribeAwake(Action action) => AwakeEvent -= action;
+        internal static void InvokeAwake() => AwakeEvent?.Invoke();
+        #endregion
         #region Internal OnEnable Functions
         internal static event Action OnEnableEvent;
         internal static void SubscribeOnEnable(Action action) => OnEnableEvent += action;
@@ -70,6 +76,17 @@ namespace OrionEngine
         internal static void UnsubscribeLateUpdate(Action action) => LateUpdateEvent -= action;
         internal static void InvokeLateUpdate() => LateUpdateEvent?.Invoke();
         #endregion
-
+        #region Internal OnDisable Functions
+        internal static event Action OnDisableEvent;
+        internal static void SubscribeOnDisable(Action action) => OnDisableEvent += action;
+        internal static void UnsubscribeOnDisable(Action action) => OnDisableEvent -= action;
+        internal static void InvokeOnDisable() => OnDisableEvent?.Invoke();
+        #endregion
+        #region Internal OnDestroy Functions
+        internal static event Action OnDestroyEvent;
+        internal static void SubscribeOnDestroy(Action action) => OnDestroyEvent += action;
+        internal static void UnsubscribeOnDestroy(Action action) => OnDestroyEvent -= action;
+        internal static void InvokeOnDestroy() => OnDestroyEvent?.Invoke();
+        #endregion
     }
 }
