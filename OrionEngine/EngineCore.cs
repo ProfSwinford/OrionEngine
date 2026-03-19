@@ -1,5 +1,9 @@
 ﻿// based on the Unity Engine Execution Order: https://docs.unity3d.com/6000.3/Documentation/Manual/execution-order.html
 
+global using static OrionEngine.EngineModules.InputModule;
+global using static OrionEngine.EngineUtils;
+global using static OrionEngine.EngineStatistics;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,8 +11,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Threading;
-using static OrionEngine.EngineUtils;
-using static OrionEngine.EngineStatistics;
 using OrionEngine.EngineModules.Rendering;
 
 namespace OrionEngine

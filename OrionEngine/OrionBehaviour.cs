@@ -12,7 +12,7 @@ namespace OrionEngine
     public abstract class OrionBehaviour
     {
         #region OrionBehaviour Utils
-        public void Print(Object message) 
+        public void Print(Object? message = null) 
         {
             EngineUtils.Print(message.ToString());
         }
