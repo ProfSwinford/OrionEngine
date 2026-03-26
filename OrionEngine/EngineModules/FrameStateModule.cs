@@ -49,20 +49,23 @@ namespace OrionEngine
             {
                 switch (currentCycle)
                 {
-                    case FrameState.Awake:
+                    case FrameState.OnInputEvents: //Moved to before Awake to allow for input state storage before OrionBehaviour functions are called.
                         break;
+                    case FrameState.Awake:
                     case FrameState.OnEnable:
+                        BehaviourControlModule.ProcessNewObjects();
                         break;
                     case FrameState.Start:
+                        BehaviourControlModule.ProcessStart();
                         break;
                     case FrameState.FixedUpdate:
-                        break;
-                    case FrameState.OnInputEvents:
+                        BehaviourControlModule.ProcessFixedUpdate();
                         break;
                     case FrameState.Update:
-                        BehaviourControlModule.InvokeUpdate();
+                        BehaviourControlModule.ProcessUpdate();
                         break;
                     case FrameState.LateUpdate:
+                        BehaviourControlModule.ProcessLateUpdate();
                         break;
                     case FrameState.OnRenderImage:
                         break;

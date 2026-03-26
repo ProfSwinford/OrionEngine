@@ -31,12 +31,14 @@ namespace OrionEngine
 
         private static void InitializeEngine()
         {
+            #region Debug Testing
             //Debug logs for testing the Debug class and ColoredText struct
             //new ColoredText("Welcome to Orion Engine!", ConsoleColor.Cyan).Write('\n');
             //Debug.LogMessage(new ColoredText("Starting Engine Systems:", ConsoleColor.Cyan));
             //Debug.Log("Engine Initializing Logs");
             //Debug.LogWarning("Engine Initializing Warnings");
             //Debug.LogError("Engine Initializing Errors");
+            #endregion
 
             //ConsoleRendererModule renderModule = new ConsoleRendererModule();
 
@@ -50,7 +52,6 @@ namespace OrionEngine
             WaitForInput();
 
             FrameStateModule.RunEngineCycle();
-
         }
 
         private static bool InitEngineModules()
@@ -99,7 +100,7 @@ namespace OrionEngine
 
         public static void WaitForInput()
         {
-            Console.ReadKey();
+            Console.ReadKey(true);
         }
 #nullable disable
 

@@ -12,9 +12,9 @@ namespace OrionEngine
     public abstract class OrionBehaviour
     {
         #region OrionBehaviour Utils
-        public void Print(Object? message = null) 
+        public void Print(Object? message = null, char end = '\n') 
         {
-            EngineUtils.Print(message.ToString());
+            EngineUtils.Print(message.ToString() + end);
         }
         public void WaitForInput() 
         {
@@ -22,58 +22,99 @@ namespace OrionEngine
         }
         #endregion
 
-        private Action cachedAwake;
-        private Action cachedOnEnable;
-        private Action cachedStart;
-        private Action cachedFixedUpdate;
-        private Action cachedUpdate;
-        private Action cachedLateUpdate;
-        private Action OnDisable;
-        private Action OnDestroy;
+        internal Action Awake;
+        internal Action OnEnable;
+        internal Action Start;
+        internal Action FixedUpdate;
+        internal Action Update;
+        internal Action LateUpdate;
+        internal Action OnDisable;
+        internal Action OnDestroy;
 
-        public OrionBehaviour()
+        internal bool InvokedAwake = false;
+        internal bool InvokedStart = false;
+        internal bool IsEnabled = true;
+        public bool Enabled { get => IsEnabled; set => BehaviourControlModule.SetEnabled(this, value); }
+
+        public OrionBehaviour(bool enabled = true)
         {
-            RegisterLifecycleMethods();
-        }
-        internal void InternalOnDisable()
-        {
-            UnregisterLifecycleMethods();
-        }
-        internal void InternalOnDestroy()
-        {
-            InternalOnDestroy();
+            BehaviourControlModule.RegisterBehaviour(this);
+            CheckLifecycleMethods();
         }
 
-        private void RegisterLifecycleMethods()
+        private void CheckLifecycleMethods()
         {
             var type = GetType();
 
             // We will use reflection to check if the derived class has implemented any of the lifecycle methods.
             // If so, we will subscribe them to the appropriate events in the EngineControlModule.
+            var awakeMethod = type.GetMethod("Awake");
+            if (awakeMethod != null)
+            {
+                Awake = (Action)Delegate.CreateDelegate(
+                    typeof(Action), this, awakeMethod);
+                //BehaviourControlModule.SubscribeUpdate(cachedAwake); // All of these "subscribe" functions have been depreciated
+            }
+            var OnEnableMethod = type.GetMethod("OnEnable");
+            if (OnEnableMethod != null)
+            {
+                OnEnable = (Action)Delegate.CreateDelegate(
+                    typeof(Action), this, OnEnableMethod);
+                //BehaviourControlModule.SubscribeUpdate(cachedOnEnable);
+            }
+            var StartMethod = type.GetMethod("Start");
+            if (StartMethod != null)
+            {
+                Start = (Action)Delegate.CreateDelegate(
+                    typeof(Action), this, StartMethod);
+                //BehaviourControlModule.SubscribeUpdate(cachedStart);
+            }
+            var FixedUpdateMethod = type.GetMethod("FixedUpdate");
+            if (FixedUpdateMethod != null)
+            {
+                FixedUpdate = (Action)Delegate.CreateDelegate(
+                    typeof(Action), this, FixedUpdateMethod);
+                //BehaviourControlModule.SubscribeUpdate(cachedFixedUpdate);
+            }
             var updateMethod = type.GetMethod("Update");
             if (updateMethod != null)
             {
-                cachedUpdate = (Action)Delegate.CreateDelegate(
+                Update = (Action)Delegate.CreateDelegate(
                     typeof(Action), this, updateMethod);
-                BehaviourControlModule.SubscribeUpdate(cachedUpdate);
+                //BehaviourControlModule.SubscribeUpdate(cachedUpdate);
             }
-
             var lateUpdateMethod = type.GetMethod("LateUpdate");
             if (lateUpdateMethod != null)
             {
-                cachedLateUpdate = (Action)Delegate.CreateDelegate(
+                LateUpdate = (Action)Delegate.CreateDelegate(
                     typeof(Action), this, lateUpdateMethod);
-                BehaviourControlModule.SubscribeLateUpdate(cachedLateUpdate);
+                //BehaviourControlModule.SubscribeLateUpdate(cachedLateUpdate);
+            }
+            var OnDisableMethod = type.GetMethod("OnDisable");
+            if (OnDisableMethod != null)
+            {
+                OnDisable = (Action)Delegate.CreateDelegate(
+                    typeof(Action), this, OnDisableMethod);
+                //BehaviourControlModule.SubscribeLateUpdate(cachedOnDisable);
+            }
+            var OnDestroyMethod = type.GetMethod("OnDestroy");
+            if (OnDestroyMethod != null)
+            {
+                OnDestroy = (Action)Delegate.CreateDelegate(
+                    typeof(Action), this, OnDestroyMethod);
+                //BehaviourControlModule.SubscribeLateUpdate(cachedOnDestroy);
             }
         }
 
-        private void UnregisterLifecycleMethods()
-        {
-            if (cachedUpdate != null)
-                BehaviourControlModule.UnsubscribeUpdate(cachedUpdate);
+        #region Unused/Old Code
+        //private void UnregisterLifecycleMethods()
+        //{
+        //    if (Update != null)
+        //        BehaviourControlModule.UnsubscribeUpdate(Update);
 
-            if (cachedLateUpdate != null)
-                BehaviourControlModule.UnsubscribeLateUpdate(cachedLateUpdate);
-        }
+        //    if (LateUpdate != null)
+        //        BehaviourControlModule.UnsubscribeLateUpdate(LateUpdate);
+        //}
+        #endregion
     }
 }
