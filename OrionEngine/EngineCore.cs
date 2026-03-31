@@ -1,6 +1,6 @@
 ﻿// based on the Unity Engine Execution Order: https://docs.unity3d.com/6000.3/Documentation/Manual/execution-order.html
 
-global using static OrionEngine.EngineModules.InputModule;
+global using Input = OrionEngine.EngineModules.InputModule;
 global using static OrionEngine.EngineUtils;
 global using static OrionEngine.EngineStatistics;
 
@@ -64,6 +64,10 @@ namespace OrionEngine
             if (!FrameStateModule.InitializeEngineFrameCycle())
             {
                 throw new Exception("Failed to initialize Engine Frame Cycle.");
+            }
+            if (!Input.InitializeInputModule())
+            {
+                throw new Exception("Failed to Init Input."); 
             }
             return true;
         }

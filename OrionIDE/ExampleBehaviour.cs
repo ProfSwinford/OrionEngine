@@ -31,6 +31,8 @@ namespace OrionIDE
         {
             count++;
             EngineUtils.ConsoleWriteLoadingDots(count, 5);
+
+            if()
         }
         public void LateUpdate() 
         {

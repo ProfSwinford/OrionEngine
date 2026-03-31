@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OrionEngine.EngineModules;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -50,6 +51,7 @@ namespace OrionEngine
                 switch (currentCycle)
                 {
                     case FrameState.OnInputEvents: //Moved to before Awake to allow for input state storage before OrionBehaviour functions are called.
+                        InputModule.Update();
                         break;
                     case FrameState.Awake:
                     case FrameState.OnEnable:
