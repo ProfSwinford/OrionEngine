@@ -1,6 +1,5 @@
 ﻿// based on the Unity Engine Execution Order: https://docs.unity3d.com/6000.3/Documentation/Manual/execution-order.html
 
-global using Input = OrionEngine.EngineModules.InputModule;
 global using static OrionEngine.EngineUtils;
 global using static OrionEngine.EngineStatistics;
 
@@ -15,6 +14,7 @@ using OrionEngine.EngineModules.Rendering;
 
 namespace OrionEngine
 {
+
     //This class will be responsible for managing the overall state of the engine, as well as any necessary initialization and cleanup tasks.
     public class EngineCore
     {
@@ -65,10 +65,10 @@ namespace OrionEngine
             {
                 throw new Exception("Failed to initialize Engine Frame Cycle.");
             }
-            if (!Input.InitializeInputModule())
-            {
-                throw new Exception("Failed to Init Input."); 
-            }
+            //if (!Input.InitializeInputModule())
+            //{
+            //    throw new Exception("Failed to Init Input."); 
+            //}
             return true;
         }
     }

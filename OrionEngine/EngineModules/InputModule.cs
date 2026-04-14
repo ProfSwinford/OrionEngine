@@ -1,14 +1,12 @@
 ﻿//https://learn.microsoft.com/en-us/dotnet/api/system.windows.input.keyboard?view=windowsdesktop-10.0
-
+//using static OrionEngine.EngineModules.InputModule;
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using System.Windows.Input; //Add "WindowsBase" reference to project
-
 
 namespace OrionEngine.EngineModules
 {
-    public class InputModule
+    public static class InputModule
     {
         [DllImport("user32.dll")]
         private static extern short GetAsyncKeyState(int vKey);
@@ -17,29 +15,29 @@ namespace OrionEngine.EngineModules
         private static bool[] _current;
         private static bool[] _previous;
         #region singleton
-        private static InputModule inputModule = new InputModule();
-        public static InputModule input => inputModule;
-        public static bool InitializeInputModule()
-        {
-            int attempts = 0;
-        INPUTINIT:
-            if (input != null)
-            {
-                Debug.Log("Behaviour Control Module Initialized Successfully.");
-                return true;
-            }
-            else if (attempts < 3)
-            {
-                Debug.LogError("Failed to Initialize Behaviour Control Module. Retrying");
-                attempts++;
-                goto INPUTINIT;
-            }
-            else
-            {
-                Debug.LogError("Failed to Initialize Behaviour Control Module after 3 attempts. Aborting.");
-                return false;
-            }
-        }
+        //private static InputModule inputModule = new InputModule();
+        //public static InputModule input => inputModule;
+        //public static bool InitializeInputModule()
+        //{
+        //    int attempts = 0;
+        //INPUTINIT:
+        //    if (input != null)
+        //    {
+        //        Debug.Log("Behaviour Control Module Initialized Successfully.");
+        //        return true;
+        //    }
+        //    else if (attempts < 3)
+        //    {
+        //        Debug.LogError("Failed to Initialize Behaviour Control Module. Retrying");
+        //        attempts++;
+        //        goto INPUTINIT;
+        //    }
+        //    else
+        //    {
+        //        Debug.LogError("Failed to Initialize Behaviour Control Module after 3 attempts. Aborting.");
+        //        return false;
+        //    }
+        //}
         #endregion
         static InputModule()
         {
@@ -145,27 +143,30 @@ namespace OrionEngine.EngineModules
             }
         }
 
-        public static bool IsKeyDown(Keycode key)
+        public static bool GetKeyDown(Keycode key)
         {
             if (!_map.ContainsKey(key)) return false;
             return _current[(int)key];
         }
 
-        public static bool IsKeyPressed(Keycode key)
+        public static bool GetKey(Keycode key)
         {
             if (!_map.ContainsKey(key)) return false;
             int idx = (int)key;
             return _current[idx] && !_previous[idx];
         }
 
-        public static bool IsKeyReleased(Keycode key)
+        public static bool GetKeyUp(Keycode key)
         {
             if (!_map.ContainsKey(key)) return false;
             int idx = (int)key;
             return !_current[idx] && _previous[idx];
         }
     }
+}
 
+namespace OrionEngine
+{
     public enum Keycode
     {
         Unknown = 0,
@@ -182,6 +183,6 @@ namespace OrionEngine.EngineModules
         //Special Keys
         F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11, F12, Insert, Delete, Home, End, PageUp, PageDown, Escape,
     }
-
-
 }
+
+

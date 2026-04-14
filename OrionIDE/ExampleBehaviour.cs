@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿//using System;
+//using System.Collections.Generic;
+//using System.Linq;
+//using System.Text;
+//using System.Threading.Tasks;
 using OrionEngine;
 
 namespace OrionIDE
@@ -32,7 +32,7 @@ namespace OrionIDE
             count++;
             EngineUtils.ConsoleWriteLoadingDots(count, 5);
 
-            if()
+            if (Input.GetKeyDown(Keycode.A)) { }
         }
         public void LateUpdate() 
         {
@@ -49,4 +49,5 @@ namespace OrionIDE
             Print("ExampleBehaviour OnDestroy");
         }
     }
+
 }

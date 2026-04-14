@@ -1,9 +1,11 @@
 ﻿// based on the Unity Engine Execution Order: https://docs.unity3d.com/6000.3/Documentation/Manual/execution-order.html
-
+global using Input = OrionEngine.EngineModules.InputModule;
+using OrionEngine.EngineModules;
 using System;
 
 namespace OrionEngine
 {
+    //using EngineModules;
     /// <summary>
     /// Behavious class that other scrips will inherit from, allowing them to be attached to game objects and have their own update loops, etc.
     /// From this class, we will subscribe to the engine's update loop allowing us to have a more flexible and modular approach to game development,
@@ -11,6 +13,7 @@ namespace OrionEngine
     /// </summary>
     public abstract class OrionBehaviour
     {
+
         #region OrionBehaviour Utils
         public void Print(Object? message = null, char end = '\n') 
         {
@@ -30,6 +33,8 @@ namespace OrionEngine
         internal Action LateUpdate;
         internal Action OnDisable;
         internal Action OnDestroy;
+        
+        //public Input _= Input.input;
 
         internal bool InvokedAwake = false;
         internal bool InvokedStart = false;
@@ -38,8 +43,9 @@ namespace OrionEngine
 
         public OrionBehaviour(bool enabled = true)
         {
-            BehaviourControlModule.RegisterBehaviour(this);
+            BehaviourControlModule.RegisterBehaviour(this);     
             CheckLifecycleMethods();
+
         }
 
         private void CheckLifecycleMethods()
@@ -104,6 +110,14 @@ namespace OrionEngine
                     typeof(Action), this, OnDestroyMethod);
                 //BehaviourControlModule.SubscribeLateUpdate(cachedOnDestroy);
             }
+        }
+
+        //Input Module Wrapper
+        public static class Input
+        {
+            public static bool GetKeyDown(Keycode key) => InputModule.GetKeyDown(key);
+            public static bool GetKey(Keycode key) => InputModule.GetKey(key);
+            public static bool GetKeyUp(Keycode key) => InputModule.GetKeyUp(key);
         }
 
         #region Unused/Old Code
