@@ -13,7 +13,6 @@ namespace OrionEngine
     /// </summary>
     public abstract class OrionBehaviour
     {
-
         #region OrionBehaviour Utils
         public void Print(Object? message = null, char end = '\n') 
         {
@@ -118,6 +117,12 @@ namespace OrionEngine
             public static bool GetKeyDown(Keycode key) => InputModule.GetKeyDown(key);
             public static bool GetKey(Keycode key) => InputModule.GetKey(key);
             public static bool GetKeyUp(Keycode key) => InputModule.GetKeyUp(key);
+            public static bool IsAnyKeyDown() => InputModule.AnyKeyDown();
+
+        }
+        /*public*/ internal static class Engine //temporarily internal until we have coroutines implemented, then we can make this public and allow users to toggle the engine from their scripts.
+        {
+            public static void ToggleEngine() => FrameStateModule.ToggleProgramRunning();
         }
 
         #region Unused/Old Code

@@ -3,7 +3,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace OrionEngine
+namespace OrionEngine.EngineModules
 {
     /// <summary> Engine Control Module
     /// This class will be responsible for managing the execution of the engine cycle, as well as any other necessary

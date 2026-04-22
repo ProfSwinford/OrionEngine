@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Threading;
 using OrionEngine.EngineModules.Rendering;
+using OrionEngine.EngineModules;
 
 namespace OrionEngine
 {
@@ -40,7 +41,7 @@ namespace OrionEngine
             //Debug.LogError("Engine Initializing Errors");
             #endregion
 
-            //ConsoleRendererModule renderModule = new ConsoleRendererModule();
+            ConsoleRendererModule renderModule = new ConsoleRendererModule();
 
             Console.CursorVisible = false;
             Debug.Log("Initializing Core Engine Modules...");
@@ -49,9 +50,14 @@ namespace OrionEngine
                 throw new Exception("Failed to initialize Engine Core, check log output for details.");
             }
             Debug.Log("Engine Initialized Successfully, press any key to contine...");
-            WaitForInput();
-
             FrameStateModule.RunEngineCycle();
+            
+        }
+
+        internal static void EngineUpdate() 
+        {   
+            //WaitForInput();
+            //FrameStateModule.ToggleProgramRunning();
         }
 
         private static bool InitEngineModules()
@@ -65,10 +71,6 @@ namespace OrionEngine
             {
                 throw new Exception("Failed to initialize Engine Frame Cycle.");
             }
-            //if (!Input.InitializeInputModule())
-            //{
-            //    throw new Exception("Failed to Init Input."); 
-            //}
             return true;
         }
     }
@@ -78,7 +80,7 @@ namespace OrionEngine
         public static int totalFrames {get => frameCount;}
         public static void IncrementFrameCount() => frameCount++;
         public static int currentFrame => totalFrames + 1;
-        public static bool lockFrameRate = true;
+        public static bool lockFrameRate = false;
         public static float targetFrameRate = 60;
         public static bool disableConsoleOutput = false;
     }
@@ -104,7 +106,11 @@ namespace OrionEngine
 
         public static void WaitForInput()
         {
-            Console.ReadKey(true);
+            while (!InputModule.AnyKeyDown())
+            {
+                Print("continuing...");
+                continue;
+            }
         }
 #nullable disable
 

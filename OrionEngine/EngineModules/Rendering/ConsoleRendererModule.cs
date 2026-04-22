@@ -1,4 +1,5 @@
 ﻿// Derrived from https://github.com/NinovanderMark/ConsoleRenderer
+// https://github.com/NinovanderMark/ConsoleRenderer/tree/main/ConsoleRenderer.Examples/Programs
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -8,15 +9,16 @@ namespace OrionEngine.EngineModules.Rendering
 {
     public class ConsoleRendererModule
     {
-        public static ConsoleCanvas canvas = null;
+        private static ConsoleCanvas _canvas = new ConsoleCanvas(Console.WindowWidth, Console.WindowHeight);
+        public static ConsoleCanvas canvas = _canvas;
 
         public ConsoleRendererModule() 
         {
             EngineStatistics.disableConsoleOutput = true;
 
-            canvas = new ConsoleCanvas(9 * 4, 16 * 2);
-            canvas.CreateBorder();
-            canvas.Render();
+            //canvas = new ConsoleCanvas(Console.WindowWidth, Console.WindowHeight);
+            //canvas.CreateBorder();
+            //canvas.Render();
         }
     }
 
@@ -38,6 +40,9 @@ namespace OrionEngine.EngineModules.Rendering
         private List<List<Pixel>> _pixels;
         private List<List<Pixel>> _previous;
 
+        // Add this event
+        public event Action? OnRender;
+
         public ConsoleCanvas(int width, int height, bool interlaced = false, bool autoResize = false)
         {
             Width = width;
@@ -53,7 +58,6 @@ namespace OrionEngine.EngineModules.Rendering
 
             Resize(width, height);
         }
-
         public ConsoleCanvas(bool interlaced = false, bool autoResize = false)
             : this(Console.WindowWidth, Console.WindowHeight, interlaced, autoResize)
         {
@@ -155,6 +159,9 @@ namespace OrionEngine.EngineModules.Rendering
             Console.CursorTop = 0;
             Console.CursorLeft = 0;
 
+            // Raise the event after rendering
+            OnRender?.Invoke();
+
             // Temporary variables to track Console attributes like size, position and color
             int cursorTop = 0;
             int cursorLeft = 0;
@@ -162,10 +169,10 @@ namespace OrionEngine.EngineModules.Rendering
             int windowHeight = Console.WindowHeight;
             ConsoleColor foregroundColor = Console.ForegroundColor;
             ConsoleColor backgroundColor = Console.BackgroundColor;
-
-            if (_previousWidth != windowWidth || _previousHeight != windowHeight)
+            
+            if (AutoResize)
             {
-                if (AutoResize)
+                if (_previousWidth != windowWidth || _previousHeight != windowHeight)
                 {
                     Resize(windowWidth, windowHeight);
                 }
@@ -175,6 +182,7 @@ namespace OrionEngine.EngineModules.Rendering
                 _previousWidth = windowWidth;
                 _previousHeight = windowHeight;
             }
+            ClearPixelCache();
 
             int leftOperations = 0;
             int backgroundOperations = 0;
@@ -257,6 +265,7 @@ namespace OrionEngine.EngineModules.Rendering
 
             // Swap whether we render odd or even rows next frame
             _oddRows = !_oddRows;
+
             return this;
         }
         public ConsoleCanvas Resize(int width, int height)
@@ -409,6 +418,72 @@ namespace OrionEngine.EngineModules.Rendering
                 return pixel == this;
 
             return false;
+        }
+    }
+
+    public class Pong
+    {
+        //private readonly double _framerate;
+
+        private int _x;
+        private int _y;
+        private int _xVel;
+        private int _yVel;
+
+        //DateTime _previousFrame;
+
+        public Pong()
+        {
+            _xVel = 1;
+            _yVel = 1;
+
+            //_previousFrame = DateTime.Now;
+            //_framerate = 1000d / framesPerSecond;
+
+            // Change this line:
+            // ConsoleRendererModule.canvas.Render += this.Tick;
+            // To:
+            ConsoleRendererModule.canvas.OnRender += this.Tick;
+
+        }
+
+        public void Tick()
+        {
+            ConsoleRendererModule.canvas.Clear();
+            ConsoleRendererModule.canvas.CreateBorder();
+
+            var currentTime = DateTime.Now;
+            //if ((currentTime - _previousFrame).TotalMilliseconds >= _framerate)
+            //{
+                _x += _xVel;
+                _y += _yVel;
+
+                if (_x < 1)
+                {
+                    _x = 1;
+                    _xVel = 1;
+                }
+                else if (_x + 1 >= ConsoleRendererModule.canvas.Width)
+                {
+                    _x = ConsoleRendererModule.canvas.Width - 2;
+                    _xVel = -1;
+                }
+
+                if (_y < 1)
+                {
+                    _y = 1;
+                    _yVel = 1;
+                }
+                else if (_y + 1 >= ConsoleRendererModule.canvas.Height)
+                {
+                    _y = ConsoleRendererModule.canvas.Height - 2;
+                    _yVel = -1;
+                }
+
+                //_previousFrame = currentTime;
+            //}
+
+            ConsoleRendererModule.canvas.Set(_x, _y, ConsoleColor.Blue);
         }
     }
 }

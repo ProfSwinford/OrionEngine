@@ -5,8 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static OrionEngine.EngineStatistics;
+//using static OrionEngine.EngineModules.Rendering.ConsoleRendererModule;
+using OrionEngine.EngineModules.Rendering;
 
-namespace OrionEngine
+namespace OrionEngine.EngineModules
 {
     public class FrameStateModule
     {
@@ -41,55 +43,86 @@ namespace OrionEngine
         #endregion
 
         internal static bool engineStarted = false;
-        static FrameState currentCycle = 0;
+        static FrameState curFrameState = 0;
+        static bool programRunning = true; // don't change
 
         public static void RunEngineCycle()
         {
             engineStarted = true;
             while (engineStarted)
             {
-                switch (currentCycle)
+                switch (curFrameState)
                 {
                     case FrameState.OnInputEvents: //Moved to before Awake to allow for input state storage before OrionBehaviour functions are called.
                         InputModule.Update();
                         break;
                     case FrameState.Awake:
                     case FrameState.OnEnable:
+                        if (!programRunning)
+                            break;
+
                         BehaviourControlModule.ProcessNewObjects();
                         break;
                     case FrameState.Start:
+                        if (!programRunning)
+                            break;
+
                         BehaviourControlModule.ProcessStart();
                         break;
                     case FrameState.FixedUpdate:
+                        if (!programRunning)
+                            break;
+
                         BehaviourControlModule.ProcessFixedUpdate();
                         break;
                     case FrameState.Update:
+                        //EngineCore.EngineUpdate();
+
+                        if (!programRunning)
+                            break;
+
                         BehaviourControlModule.ProcessUpdate();
                         break;
                     case FrameState.LateUpdate:
+                        if (!programRunning)
+                            break;
+
                         BehaviourControlModule.ProcessLateUpdate();
                         break;
                     case FrameState.OnRenderImage:
+                        if (!programRunning)
+                            break;
+
+                        //canvas.Render();
+                        ConsoleRendererModule.canvas.Render();
                         break;
                     case FrameState.OnApplicationQuit:
                         break;
                     case FrameState.OnDisable:
                         break;
                     case FrameState.OnDestroy:
-                        IncrementFrameCount();
                         ResetCycle();
+                        if (!programRunning)
+                            break;
+                        IncrementFrameCount();
                         break;
                 }
-                //Debug.Log($"Current Engine Cycle: {currentCycle}");
-                System.Threading.Thread.Sleep(1000 / (lockFrameRate ? (int)targetFrameRate : 1000)); //Sleep to maintain target frame rate 
+                //Debug.Log($"Current Engine Cycle: {curFrameState}");
+                //1000ms / 60fps = 16.67ms per frame, so we sleep for that amount of time to maintain a consistent frame rate.
+                //We can adjust this based on the target frame rate set in the ECM Timing Settings.
+                //System.Threading.Thread.Sleep(1000 / (lockFrameRate ? (int)targetFrameRate : 1000)); //Sleep to maintain target frame rate 
                 IncrementCycle();
             }
+
         }
-        public static void ChangeCycle(FrameState newCycle) => currentCycle = newCycle;
-        public static void IncrementCycle() => currentCycle++;
-        public static void ResetCycle() => currentCycle = 0;
+        public static void ChangeCycle(FrameState newCycle) => curFrameState = newCycle;
+        public static void IncrementCycle() => curFrameState++;
+        public static void ResetCycle() => curFrameState = 0;
         public static void StopEngine() => engineStarted = false;
+
+        internal static void ToggleProgramRunning() => programRunning = !programRunning;
     }
+
     public enum FrameState
     {
         // Comment out unnecessary options to limit our options for the time being. We'll add more as we need them.

@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using OrionEngine;
+using OrionEngine.EngineModules.Rendering;
 
 
 namespace OrionIDE;
@@ -13,7 +14,8 @@ internal class Program
 {
     static void Main(string[] args)
     {
-        ExampleBehaviour example = new ExampleBehaviour();
+        //ExampleBehaviour example = new ExampleBehaviour();
+        Pong p = new Pong();
         EngineCore.EngineCoreInit();
 
 

@@ -128,7 +128,7 @@ namespace OrionEngine.EngineModules
         }
 
         // Call once per frame to poll keyboard state
-        public static void Update()
+        internal static void Update()
         {
             // copy current to previous
             Array.Copy(_current, _previous, _current.Length);
@@ -143,20 +143,29 @@ namespace OrionEngine.EngineModules
             }
         }
 
-        public static bool GetKeyDown(Keycode key)
+        internal static bool GetKey(Keycode key)
         {
             if (!_map.ContainsKey(key)) return false;
             return _current[(int)key];
         }
 
-        public static bool GetKey(Keycode key)
+        internal static bool AnyKeyDown()
+        {
+            foreach (var kv in _map)
+            {
+                if (GetKeyDown(kv.Key)) return true;
+            }
+            return false;
+        }
+
+        internal static bool GetKeyDown(Keycode key)
         {
             if (!_map.ContainsKey(key)) return false;
             int idx = (int)key;
             return _current[idx] && !_previous[idx];
         }
 
-        public static bool GetKeyUp(Keycode key)
+        internal static bool GetKeyUp(Keycode key)
         {
             if (!_map.ContainsKey(key)) return false;
             int idx = (int)key;
