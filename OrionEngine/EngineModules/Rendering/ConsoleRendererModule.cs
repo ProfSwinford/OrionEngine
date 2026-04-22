@@ -14,7 +14,7 @@ namespace OrionEngine.EngineModules.Rendering
 
         public ConsoleRendererModule() 
         {
-            EngineStatistics.disableConsoleOutput = true;
+            EngineStatistics.disableConsoleOutput = false;
 
             //canvas = new ConsoleCanvas(Console.WindowWidth, Console.WindowHeight);
             //canvas.CreateBorder();
@@ -37,18 +37,20 @@ namespace OrionEngine.EngineModules.Rendering
         private int _previousWidth;
         private int _previousHeight;
         private bool _oddRows;
+        private bool _drawBorder;
         private List<List<Pixel>> _pixels;
         private List<List<Pixel>> _previous;
 
         // Add this event
         public event Action? OnRender;
 
-        public ConsoleCanvas(int width, int height, bool interlaced = false, bool autoResize = false)
+        public ConsoleCanvas(int width, int height, bool drawBorder = true, bool interlaced = false, bool autoResize = false)
         {
             Width = width;
             Height = height;
             Interlaced = interlaced;
             AutoResize = autoResize;
+            _drawBorder = drawBorder;
 
             DefaultForegroundColor = Console.ForegroundColor;
             DefaultBackgroundColor = Console.BackgroundColor;
@@ -156,6 +158,16 @@ namespace OrionEngine.EngineModules.Rendering
         }
         public ConsoleCanvas Render()
         {
+            //ConsoleRendererModule.canvas.Clear();
+
+            //if (_drawBorder)
+            //{
+            //    ConsoleRendererModule.canvas.CreateBorder();
+            //}
+
+
+
+
             Console.CursorTop = 0;
             Console.CursorLeft = 0;
 
@@ -262,7 +274,8 @@ namespace OrionEngine.EngineModules.Rendering
                     }
                 }
             }
-
+            ConsoleRendererModule.canvas.Clear();
+            ConsoleRendererModule.canvas.CreateBorder();
             // Swap whether we render odd or even rows next frame
             _oddRows = !_oddRows;
 
@@ -387,7 +400,6 @@ namespace OrionEngine.EngineModules.Rendering
                     _previous[y][x] = defaultPixel;
         }
     }
-
     
     public struct Pixel
     {
@@ -421,69 +433,65 @@ namespace OrionEngine.EngineModules.Rendering
         }
     }
 
-    public class Pong
-    {
-        //private readonly double _framerate;
+    //public class Pong
+    //{
+    //    //private readonly double _framerate;
 
-        private int _x;
-        private int _y;
-        private int _xVel;
-        private int _yVel;
+    //    private int _x;
+    //    private int _y;
+    //    private int _xVel;
+    //    private int _yVel;
 
-        //DateTime _previousFrame;
+    //    //DateTime _previousFrame;
 
-        public Pong()
-        {
-            _xVel = 1;
-            _yVel = 1;
+    //    public Pong()
+    //    {
+    //        _xVel = 1;
+    //        _yVel = 1;
 
-            //_previousFrame = DateTime.Now;
-            //_framerate = 1000d / framesPerSecond;
+    //        //_previousFrame = DateTime.Now;
+    //        //_framerate = 1000d / framesPerSecond;
 
-            // Change this line:
-            // ConsoleRendererModule.canvas.Render += this.Tick;
-            // To:
-            ConsoleRendererModule.canvas.OnRender += this.Tick;
+    //        ConsoleRendererModule.canvas.OnRender += this.Tick;
+    //    }
 
-        }
+    //    public void Tick()
+    //    {
+    //        //ConsoleRendererModule.canvas.Clear();
+    //        //ConsoleRendererModule.canvas.CreateBorder();
 
-        public void Tick()
-        {
-            ConsoleRendererModule.canvas.Clear();
-            ConsoleRendererModule.canvas.CreateBorder();
+    //        //var currentTime = DateTime.Now;
+    //        //if ((currentTime - _previousFrame).TotalMilliseconds >= _framerate)
+    //        //{
+    //            _x += _xVel;
+    //            _y += _yVel;
 
-            var currentTime = DateTime.Now;
-            //if ((currentTime - _previousFrame).TotalMilliseconds >= _framerate)
-            //{
-                _x += _xVel;
-                _y += _yVel;
+    //            if (_x < 1)
+    //            {
+    //                _x = 1;
+    //                _xVel = 1;
+    //            }
+    //            else if (_x + 1 >= ConsoleRendererModule.canvas.Width)
+    //            {
+    //                _x = ConsoleRendererModule.canvas.Width - 2;
+    //                _xVel = -1;
+    //            }
 
-                if (_x < 1)
-                {
-                    _x = 1;
-                    _xVel = 1;
-                }
-                else if (_x + 1 >= ConsoleRendererModule.canvas.Width)
-                {
-                    _x = ConsoleRendererModule.canvas.Width - 2;
-                    _xVel = -1;
-                }
+    //            if (_y < 1)
+    //            {
+    //                _y = 1;
+    //                _yVel = 1;
+    //            }
+    //            else if (_y + 1 >= ConsoleRendererModule.canvas.Height)
+    //            {
+    //                _y = ConsoleRendererModule.canvas.Height - 2;
+    //                _yVel = -1;
+    //            }
 
-                if (_y < 1)
-                {
-                    _y = 1;
-                    _yVel = 1;
-                }
-                else if (_y + 1 >= ConsoleRendererModule.canvas.Height)
-                {
-                    _y = ConsoleRendererModule.canvas.Height - 2;
-                    _yVel = -1;
-                }
+    //            //_previousFrame = currentTime;
+    //        //}
 
-                //_previousFrame = currentTime;
-            //}
-
-            ConsoleRendererModule.canvas.Set(_x, _y, ConsoleColor.Blue);
-        }
-    }
+    //        ConsoleRendererModule.canvas.Set(_x, _y, ConsoleColor.Blue);
+    //    }
+    //}
 }

@@ -15,9 +15,9 @@ internal class Program
     static void Main(string[] args)
     {
         //ExampleBehaviour example = new ExampleBehaviour();
-        Pong p = new Pong();
+        PongExample p = new PongExample();
+        //Pong p = new Pong();
         EngineCore.EngineCoreInit();
-
 
         //DX11QuadExample quadExample = new DX11QuadExample();
     }
