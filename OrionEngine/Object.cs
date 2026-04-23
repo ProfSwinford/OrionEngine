@@ -113,9 +113,24 @@ namespace OrionEngine
     }
     public class GameObject2D : GameObject
     {
-        
+        public int width, height;
+        Pixel[,]? image;
 
+        public GameObject2D(int width = 1, int height = 1, Pixel[,] image = null)
+        {
+            this.width = width;
+            this.height = height;
+            this.image = image;
 
+            ConsoleRendererModule.canvas.AddToGameObjectList(this);
+        }
+
+        public void DrawImage()
+        {
+            for(int y = 0; y < height; y++)
+                for(int x = 0; x < width; x++)
+                    ConsoleRendererModule.canvas.Set(transform.position.x+x, transform.position.y + y, image[y,x]);
+        }
 
         public GameObject2D(Transform? parent = null) : base(parent) { }
     }

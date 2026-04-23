@@ -2,8 +2,6 @@
 // https://github.com/NinovanderMark/ConsoleRenderer/tree/main/ConsoleRenderer.Examples/Programs
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
-
 
 namespace OrionEngine.EngineModules.Rendering
 {
@@ -15,10 +13,6 @@ namespace OrionEngine.EngineModules.Rendering
         public ConsoleRendererModule() 
         {
             EngineStatistics.disableConsoleOutput = false;
-
-            //canvas = new ConsoleCanvas(Console.WindowWidth, Console.WindowHeight);
-            //canvas.CreateBorder();
-            //canvas.Render();
         }
     }
 
@@ -41,8 +35,15 @@ namespace OrionEngine.EngineModules.Rendering
         private List<List<Pixel>> _pixels;
         private List<List<Pixel>> _previous;
 
+        private List<GameObject2D> gameObjects = new List<GameObject2D>();
+
         // Add this event
         public event Action? OnRender;
+
+        public void AddToGameObjectList(GameObject2D go) 
+        {
+            gameObjects.Add(go);
+        }
 
         public ConsoleCanvas(int width, int height, bool drawBorder = true, bool interlaced = false, bool autoResize = false)
         {
@@ -61,9 +62,7 @@ namespace OrionEngine.EngineModules.Rendering
             Resize(width, height);
         }
         public ConsoleCanvas(bool interlaced = false, bool autoResize = false)
-            : this(Console.WindowWidth, Console.WindowHeight, interlaced, autoResize)
-        {
-        }
+            : this(Console.WindowWidth, Console.WindowHeight, interlaced, autoResize){}
         public ConsoleCanvas Clear()
         {
             return Fill(_emptyCharacter, DefaultForegroundColor, DefaultBackgroundColor);
@@ -158,21 +157,16 @@ namespace OrionEngine.EngineModules.Rendering
         }
         public ConsoleCanvas Render()
         {
-            //ConsoleRendererModule.canvas.Clear();
-
-            //if (_drawBorder)
-            //{
-            //    ConsoleRendererModule.canvas.CreateBorder();
-            //}
-
-
-
-
             Console.CursorTop = 0;
             Console.CursorLeft = 0;
 
             // Raise the event after rendering
             OnRender?.Invoke();
+
+            foreach (GameObject2D go in gameObjects) 
+            {
+                go.DrawImage();
+            }
 
             // Temporary variables to track Console attributes like size, position and color
             int cursorTop = 0;
@@ -274,8 +268,14 @@ namespace OrionEngine.EngineModules.Rendering
                     }
                 }
             }
+
             ConsoleRendererModule.canvas.Clear();
-            ConsoleRendererModule.canvas.CreateBorder();
+
+            if (_drawBorder)
+            {
+                ConsoleRendererModule.canvas.CreateBorder();
+            }
+
             // Swap whether we render odd or even rows next frame
             _oddRows = !_oddRows;
 
@@ -357,7 +357,6 @@ namespace OrionEngine.EngineModules.Rendering
 
             return this;
         }
-
         public ConsoleCanvas Text(int x, int y, string text, bool centered = false, ConsoleColor? foreground = null, ConsoleColor? background = null)
         {
             // If the text should be centered, deduct half the text length from the x coordinate
@@ -375,7 +374,6 @@ namespace OrionEngine.EngineModules.Rendering
 
             return this;
         }
-
         public Pixel Get(int x, int y, bool backBuffer = true)
         {
             if (x < 0 || y < 0 || x >= Width || y >= Height)
@@ -385,7 +383,6 @@ namespace OrionEngine.EngineModules.Rendering
 
             return backBuffer ? _previous[y][x] : _pixels[y][x];
         }
-
         private void ClearPixelCache()
         {
             var defaultPixel = new Pixel
@@ -400,13 +397,18 @@ namespace OrionEngine.EngineModules.Rendering
                     _previous[y][x] = defaultPixel;
         }
     }
-    
     public struct Pixel
     {
         public char Character;
         public ConsoleColor Foreground;
         public ConsoleColor Background;
 
+        public Pixel(char Character = '*', ConsoleColor Foreground = ConsoleColor.White, ConsoleColor Background = ConsoleColor.Black)
+        {
+            this.Character = Character;
+            this.Background = Background;
+            this.Foreground = Foreground;
+        }
         public static bool operator ==(Pixel p1, Pixel p2)
         {
             return p1.Character == p2.Character &&
@@ -432,66 +434,4 @@ namespace OrionEngine.EngineModules.Rendering
             return false;
         }
     }
-
-    //public class Pong
-    //{
-    //    //private readonly double _framerate;
-
-    //    private int _x;
-    //    private int _y;
-    //    private int _xVel;
-    //    private int _yVel;
-
-    //    //DateTime _previousFrame;
-
-    //    public Pong()
-    //    {
-    //        _xVel = 1;
-    //        _yVel = 1;
-
-    //        //_previousFrame = DateTime.Now;
-    //        //_framerate = 1000d / framesPerSecond;
-
-    //        ConsoleRendererModule.canvas.OnRender += this.Tick;
-    //    }
-
-    //    public void Tick()
-    //    {
-    //        //ConsoleRendererModule.canvas.Clear();
-    //        //ConsoleRendererModule.canvas.CreateBorder();
-
-    //        //var currentTime = DateTime.Now;
-    //        //if ((currentTime - _previousFrame).TotalMilliseconds >= _framerate)
-    //        //{
-    //            _x += _xVel;
-    //            _y += _yVel;
-
-    //            if (_x < 1)
-    //            {
-    //                _x = 1;
-    //                _xVel = 1;
-    //            }
-    //            else if (_x + 1 >= ConsoleRendererModule.canvas.Width)
-    //            {
-    //                _x = ConsoleRendererModule.canvas.Width - 2;
-    //                _xVel = -1;
-    //            }
-
-    //            if (_y < 1)
-    //            {
-    //                _y = 1;
-    //                _yVel = 1;
-    //            }
-    //            else if (_y + 1 >= ConsoleRendererModule.canvas.Height)
-    //            {
-    //                _y = ConsoleRendererModule.canvas.Height - 2;
-    //                _yVel = -1;
-    //            }
-
-    //            //_previousFrame = currentTime;
-    //        //}
-
-    //        ConsoleRendererModule.canvas.Set(_x, _y, ConsoleColor.Blue);
-    //    }
-    //}
 }

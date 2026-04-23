@@ -4,18 +4,12 @@ global using static OrionEngine.EngineUtils;
 global using static OrionEngine.EngineStatistics;
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.IO;
-using System.Threading;
 using OrionEngine.EngineModules.Rendering;
 using OrionEngine.EngineModules;
 
 namespace OrionEngine
 {
-
     //This class will be responsible for managing the overall state of the engine, as well as any necessary initialization and cleanup tasks.
     public class EngineCore
     {
@@ -51,7 +45,6 @@ namespace OrionEngine
             }
             Debug.Log("Engine Initialized Successfully, press any key to contine...");
             FrameStateModule.RunEngineCycle();
-            
         }
 
         internal static void EngineUpdate() 
@@ -103,7 +96,6 @@ namespace OrionEngine
 
             Console.Write((message??"").ToString()+end);
         }
-
         public static void WaitForInput()
         {
             while (!InputModule.AnyKeyDown())
@@ -233,6 +225,5 @@ namespace OrionEngine
             Print();
         }
     }
-
 #endif
 }
