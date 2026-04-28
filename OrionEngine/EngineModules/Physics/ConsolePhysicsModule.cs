@@ -5,16 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using OrionEngine;
 
-public class NewOrionBehaviour1: OrionBehaviour
+namespace OrionEngine.EngineModules.Physics
 {
-    public void Start() 
+    internal class ConsolePhysicsModule
     {
-
-    }
-
-    public void Update() 
-    {
-    
     }
 }
-

@@ -1,6 +1,7 @@
 ﻿// based on the Unity Engine Execution Order: https://docs.unity3d.com/6000.3/Documentation/Manual/execution-order.html
 global using Input = OrionEngine.EngineModules.InputModule;
 using OrionEngine.EngineModules;
+using OrionEngine.EngineModules.Rendering;
 using System;
 
 namespace OrionEngine
@@ -33,8 +34,6 @@ namespace OrionEngine
         internal Action OnDisable;
         internal Action OnDestroy;
         
-        //public Input _= Input.input;
-
         internal bool InvokedAwake = false;
         internal bool InvokedStart = false;
         internal bool IsEnabled = true;
@@ -111,6 +110,11 @@ namespace OrionEngine
             }
         }
 
+        public static class Camera 
+        {
+            public static ConsoleCanvas canvas => ConsoleRendererModule.canvas;
+        }
+
         //Input Module Wrapper
         public static class Input
         {
@@ -120,7 +124,7 @@ namespace OrionEngine
             public static bool IsAnyKeyDown() => InputModule.AnyKeyDown();
 
         }
-        /*public*/ internal static class Engine //temporarily internal until we have coroutines implemented, then we can make this public and allow users to toggle the engine from their scripts.
+        internal static class Engine //temporarily internal until we have coroutines implemented, then we can make this public and allow users to toggle the engine from their scripts.
         {
             public static void ToggleEngine() => FrameStateModule.ToggleProgramRunning();
         }

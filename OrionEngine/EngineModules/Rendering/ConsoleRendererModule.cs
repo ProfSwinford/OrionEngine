@@ -1,5 +1,6 @@
 ﻿// Derrived from https://github.com/NinovanderMark/ConsoleRenderer
 // https://github.com/NinovanderMark/ConsoleRenderer/tree/main/ConsoleRenderer.Examples/Programs
+#nullable disable
 using System;
 using System.Collections.Generic;
 
@@ -397,6 +398,10 @@ namespace OrionEngine.EngineModules.Rendering
                     _previous[y][x] = defaultPixel;
         }
     }
+}
+
+namespace OrionEngine
+{
     public struct Pixel
     {
         public char Character;
