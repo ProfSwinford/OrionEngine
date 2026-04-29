@@ -141,6 +141,7 @@
   <ItemGroup>
     <Compile Include="Assets\Scripts\CharacterController.cs" />
     <Compile Include="Assets\Scripts\Sprite Data\SpriteData.cs" />
+    <Compile Include="IDEProgram.cs" />
     <Compile Include="Example Scripts\ExampleBehaviour.cs" />
     <Content Include="ClassTemplates\NewBehaviour.txt" />
     <Compile Include="Example Scripts\PongExample.cs" />
