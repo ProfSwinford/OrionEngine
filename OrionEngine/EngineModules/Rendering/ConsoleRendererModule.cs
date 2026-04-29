@@ -1,8 +1,12 @@
 ﻿// Derrived from https://github.com/NinovanderMark/ConsoleRenderer
 // https://github.com/NinovanderMark/ConsoleRenderer/tree/main/ConsoleRenderer.Examples/Programs
-#nullable disable
 using System;
 using System.Collections.Generic;
+using System.Text;
+using System.Windows.Forms;
+using System.Windows.Controls;
+using System.Drawing;
+using System.Windows.Media;
 
 namespace OrionEngine.EngineModules.Rendering
 {
@@ -19,6 +23,8 @@ namespace OrionEngine.EngineModules.Rendering
 
     public class ConsoleCanvas
     {
+        public System.Windows.Controls.RichTextBox formRender;
+
         public int Width { get; private set; }
         public int Height { get; private set; }
         public ConsoleColor DefaultForegroundColor { get; set; }
@@ -160,6 +166,7 @@ namespace OrionEngine.EngineModules.Rendering
         {
             Console.CursorTop = 0;
             Console.CursorLeft = 0;
+            
 
             // Raise the event after rendering
             OnRender?.Invoke();
@@ -216,6 +223,7 @@ namespace OrionEngine.EngineModules.Rendering
                         try
                         {
                             Console.CursorLeft = x;
+                            formRender.CaretPosition = formRender.CaretPosition.GetPositionAtOffset(x);
                         }
                         catch (ArgumentOutOfRangeException)
                         {
@@ -231,6 +239,7 @@ namespace OrionEngine.EngineModules.Rendering
                         try
                         {
                             Console.CursorTop = y;
+                            formRender.CaretPosition = formRender.CaretPosition.GetPositionAtOffset(formRender.Document.ContentStart.GetOffsetToPosition(formRender.CaretPosition) + (windowWidth * (y - cursorTop)));
                         }
                         catch (ArgumentOutOfRangeException)
                         {
@@ -243,17 +252,20 @@ namespace OrionEngine.EngineModules.Rendering
                     if (_pixels[y][x].Character != ' ' && _pixels[y][x].Foreground != foregroundColor)
                     {
                         Console.ForegroundColor = _pixels[y][x].Foreground;
+                        formRender.Foreground = new SolidColorBrush(MapConsoleColor(_pixels[y][x].Foreground));
                         foregroundColor = _pixels[y][x].Foreground;
                     }
 
                     if (_pixels[y][x].Background != backgroundColor)
                     {
                         Console.BackgroundColor = _pixels[y][x].Background;
+                        formRender.Background = new SolidColorBrush(MapConsoleColor(_pixels[y][x].Background));
                         backgroundColor = _pixels[y][x].Background;
                         backgroundOperations++;
                     }
 
                     Console.Write(_pixels[y][x].Character);
+                    formRender.AppendText(_pixels[y][x].Character.ToString());
                     cursorLeft++;
 
                     _previous[y][x] = _pixels[y][x];
@@ -264,6 +276,7 @@ namespace OrionEngine.EngineModules.Rendering
                     {
                         Console.CursorLeft = 0;
                         Console.CursorTop = 0;
+                        formRender.CaretPosition = formRender.Document.ContentStart;
                         cursorLeft = 0;
                         cursorTop = 0;
                     }
@@ -397,8 +410,33 @@ namespace OrionEngine.EngineModules.Rendering
                 for (int x = 0; x < Width; x++)
                     _previous[y][x] = defaultPixel;
         }
+        private static System.Windows.Media.Color MapConsoleColor(ConsoleColor c)
+        {
+            // Map ConsoleColor to System.Drawing.Color
+            return c switch
+            {
+                ConsoleColor.Black => System.Windows.Media.Color.FromArgb(System.Drawing.Color.Black.A, System.Drawing.Color.Black.R, System.Drawing.Color.Black.G, System.Drawing.Color.Black.B),
+                ConsoleColor.DarkBlue => System.Windows.Media.Color.FromArgb(System.Drawing.Color.DarkBlue.A, System.Drawing.Color.DarkBlue.R, System.Drawing.Color.DarkBlue.G, System.Drawing.Color.DarkBlue.B),
+                ConsoleColor.DarkGreen => System.Windows.Media.Color.FromArgb(System.Drawing.Color.DarkGreen.A, System.Drawing.Color.DarkGreen.R, System.Drawing.Color.DarkGreen.G, System.Drawing.Color.DarkGreen.B),
+                ConsoleColor.DarkCyan => System.Windows.Media.Color.FromArgb(System.Drawing.Color.DarkCyan.A, System.Drawing.Color.DarkCyan.R, System.Drawing.Color.DarkCyan.G, System.Drawing.Color.DarkCyan.B),
+                ConsoleColor.DarkRed => System.Windows.Media.Color.FromArgb(System.Drawing.Color.DarkRed.A, System.Drawing.Color.DarkRed.R, System.Drawing.Color.DarkRed.G, System.Drawing.Color.DarkRed.B),
+                ConsoleColor.DarkMagenta => System.Windows.Media.Color.FromArgb(System.Drawing.Color.DarkMagenta.A, System.Drawing.Color.DarkMagenta.R, System.Drawing.Color.DarkMagenta.G, System.Drawing.Color.DarkMagenta.B),
+                ConsoleColor.DarkYellow => System.Windows.Media.Color.FromArgb(System.Drawing.Color.Olive.A, System.Drawing.Color.Olive.R, System.Drawing.Color.Olive.G, System.Drawing.Color.Olive.B),
+                ConsoleColor.Gray => System.Windows.Media.Color.FromArgb(System.Drawing.Color.Gray.A, System.Drawing.Color.Gray.R, System.Drawing.Color.Gray.G, System.Drawing.Color.Gray.B),
+                ConsoleColor.DarkGray => System.Windows.Media.Color.FromArgb(System.Drawing.Color.DimGray.A, System.Drawing.Color.DimGray.R, System.Drawing.Color.DimGray.G, System.Drawing.Color.DimGray.B),
+                ConsoleColor.Blue => System.Windows.Media.Color.FromArgb(System.Drawing.Color.Blue.A, System.Drawing.Color.Blue.R, System.Drawing.Color.Blue.G, System.Drawing.Color.Blue.B),
+                ConsoleColor.Green => System.Windows.Media.Color.FromArgb(System.Drawing.Color.Lime.A, System.Drawing.Color.Lime.R, System.Drawing.Color.Lime.G, System.Drawing.Color.Lime.B),
+                ConsoleColor.Cyan => System.Windows.Media.Color.FromArgb(System.Drawing.Color.Cyan.A, System.Drawing.Color.Cyan.R, System.Drawing.Color.Cyan.G, System.Drawing.Color.Cyan.B),
+                ConsoleColor.Red => System.Windows.Media.Color.FromArgb(System.Drawing.Color.Red.A, System.Drawing.Color.Red.R, System.Drawing.Color.Red.G, System.Drawing.Color.Red.B),
+                ConsoleColor.Magenta => System.Windows.Media.Color.FromArgb(System.Drawing.Color.Magenta.A, System.Drawing.Color.Magenta.R, System.Drawing.Color.Magenta.G, System.Drawing.Color.Magenta.B),
+                ConsoleColor.Yellow => System.Windows.Media.Color.FromArgb(System.Drawing.Color.Yellow.A, System.Drawing.Color.Yellow.R, System.Drawing.Color.Yellow.G, System.Drawing.Color.Yellow.B),
+                ConsoleColor.White => System.Windows.Media.Color.FromArgb(System.Drawing.Color.White.A, System.Drawing.Color.White.R, System.Drawing.Color.White.G, System.Drawing.Color.White.B),
+                _ => System.Windows.Media.Color.FromArgb(System.Drawing.Color.White.A, System.Drawing.Color.White.R, System.Drawing.Color.White.G, System.Drawing.Color.White.B)
+            };
+        }
     }
 }
+
 
 namespace OrionEngine
 {

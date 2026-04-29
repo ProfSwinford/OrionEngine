@@ -50,6 +50,8 @@
     <Reference Include="Microsoft.Extensions.DependencyModel, Version=9.0.0.9, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Extensions.DependencyModel.9.0.9\lib\net462\Microsoft.Extensions.DependencyModel.dll</HintPath>
     </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="Silk.NET.Core, Version=2.23.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Silk.NET.Core.2.23.0\lib\netstandard2.0\Silk.NET.Core.dll</HintPath>
     </Reference>
@@ -137,10 +139,9 @@
     <Reference Include="Ultz.Bcl.Half, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Ultz.Bcl.Half.Fallback.1.0.0\lib\netstandard2.0\Ultz.Bcl.Half.dll</HintPath>
     </Reference>
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Scripts\CharacterController.cs" />
-    <Compile Include="Assets\Scripts\Sprite Data\SpriteData.cs" />
     <Compile Include="IDEProgram.cs" />
     <Compile Include="Example Scripts\ExampleBehaviour.cs" />
     <Content Include="ClassTemplates\NewBehaviour.txt" />
@@ -160,7 +161,9 @@
       <Name>OrionEngine</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Assets\Scripts\Sprite Data\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Ultz.Native.GLFW.3.4.0\build\net461\Ultz.Native.GLFW.targets" Condition="Exists('..\packages\Ultz.Native.GLFW.3.4.0\build\net461\Ultz.Native.GLFW.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

@@ -1,16 +1,16 @@
-﻿using OrionEngine;
+﻿//using OrionEngine;
 
-namespace OrionIDE;
+//namespace OrionIDE;
 
-internal class Program
-{
-    static void Main(string[] args)
-    {
-        PongExample p = new PongExample();
+//internal class Program
+//{
+//    static void Main(string[] args)
+//    {
+//        PongExample p = new PongExample();
 
-        CharacterController c = new CharacterController();
+//        CharacterController c = new CharacterController();
 
-        EngineCore.EngineCoreInit();
+//        EngineCore.EngineCoreInit();
 
-    }
-}
+//    }
+//}
