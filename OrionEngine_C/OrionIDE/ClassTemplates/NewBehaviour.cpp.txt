@@ -1,0 +1,14 @@
+// Converted from OrionIDE/ClassTemplates/NewBehaviour.txt.
+// Source half of the new-behaviour template. $safeitemname$ is replaced with the
+// class name when the template is instantiated.
+#include "$safeitemname$.h"
+
+void $safeitemname$::Start()
+{
+
+}
+
+void $safeitemname$::Update()
+{
+
+}

@@ -1,0 +1,16 @@
+// Converted from OrionIDE/ClassTemplates/NewBehaviour.txt.
+// Header half of the new-behaviour template. $safeitemname$ is replaced with the
+// class name when the template is instantiated.
+#pragma once
+
+#include "OrionEngine/OrionEngine.h"
+
+using namespace OrionEngine;
+
+class $safeitemname$ : public OrionBehaviour
+{
+public:
+    void Start() override;
+
+    void Update() override;
+};
