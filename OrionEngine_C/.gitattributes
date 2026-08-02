@@ -1,0 +1,27 @@
+# Normalize line endings so the engine builds identically on Windows and POSIX.
+* text=auto eol=lf
+
+*.h      text diff=cpp
+*.hpp    text diff=cpp
+*.c      text diff=cpp
+*.cpp    text diff=cpp
+*.md     text diff=markdown
+*.json   text
+*.txt    text
+*.cmake  text
+CMakeLists.txt text
+
+# Batch files only make sense with CRLF.
+*.bat    text eol=crlf
+*.cmd    text eol=crlf
+
+# Never munge binaries.
+*.png    binary
+*.jpg    binary
+*.ico    binary
+*.zip    binary
+*.a      binary
+*.lib    binary
+*.so     binary
+*.dll    binary
+*.exe    binary

@@ -1,13 +1,26 @@
 # OrionEngine_C
 
-OrionEngine Education Edition — a direct C++ conversion of the C# `OrionEngine`
-project.
+OrionEngine Education Edition — a C++ game engine, converted from the C#
+`OrionEngine` project and maintained as a separate project from here on.
 
 Every type, module, field and lifecycle stage from the C# original is carried
 over, including the commented-out placeholders. The engine still renders to the
 terminal, still drives behaviours through the same Unity-style execution order,
 and still ships the same Pong / character-controller examples — but it now builds
 with CMake on Windows, Linux and macOS instead of targeting .NET Framework 4.8.
+
+## Relationship to the C# project
+
+This repository began as a direct conversion of
+[`ProfSwinford/OrionEngine`](https://github.com/ProfSwinford/OrionEngine) (C#,
+.NET Framework 4.8) and is now an independent project: there is no shared build,
+no submodule, and no dependency in either direction. Changes on either side do
+not propagate — the two will diverge, which is the point of the split.
+
+Source files carry a `// Converted from <path>` header. **Those paths refer to
+the upstream C# repository, not to this one** — for example
+`OrionEngine/EngineCore.cs` is a file in the C# project. The mapping between the
+two trees is tabulated below.
 
 ## Building
 
@@ -44,7 +57,7 @@ cmake --build --preset vs2022-debug
 ## Layout
 
 ```
-OrionEngine_C/
+.
 ├── CMakeLists.txt              root project
 ├── CMakePresets.json
 ├── OrionEngine/                static library  (was OrionEngine.csproj)
@@ -58,6 +71,8 @@ OrionEngine_C/
 ```
 
 ### File mapping
+
+Left column: paths in the upstream C# repository. Right column: paths here.
 
 | C# source | C++ conversion |
 | --- | --- |
